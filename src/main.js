@@ -1,11 +1,11 @@
 import {clamp,lerp,FlapDetector,newFlight,stepFlight,DURATION,TOTAL_RINGS} from './flight.js';
-import {CameraControls} from './camera.js';
+import {CameraControls} from './camera.js?v=1.1.0';
 const $=id=>document.getElementById(id);
 const ui={start:$('start'),status:$('tracking-status'),overlay:$('overlay')};
 let world,flight=newFlight(),mode='camera',phase='idle',calibration=null,neutral={turn:0,lift:0},signals=null,lastSeen=0,flapPending=false,startBusy=false,sound=false,audio;
 let input={turn:0,lift:.183,boost:false,flap:false},preview=newFlight(),last=performance.now(),simTime=0,toastUntil=0;
 const keys=new Set(),flaps=new FlapDetector();
-const tracker=new CameraControls($('webcam'),$('skeleton'),onPose,setStatus);
+const tracker=new CameraControls($('webcam'),$('skeleton'),onPose,setStatus,cameraUI,message=>{home();cameraUI(false);signals=null;setStatus(message,true);setStart('Volver a activar la cámara');});
 function setStatus(text,error=false){ui.status.textContent=text;ui.status.classList.toggle('error',error);}
 function setStart(text,disabled=false){ui.start.innerHTML=`${text} <span>↗</span>`;ui.start.disabled=disabled;}
 function toast(text){$('toast').textContent=text;$('toast').classList.add('visible');toastUntil=performance.now()+2200;}

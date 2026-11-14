@@ -42,7 +42,11 @@ Selecciona **Con teclado**. Usa flechas o WASD para dirección y altura; Espacio
 
 ## Privacidad y dependencias
 
-Los fotogramas se analizan en un Web Worker local con MediaPipe Pose Landmarker Lite; no se graban ni se envían a servidores. No hay analítica. Solo se guarda la mejor puntuación en `localStorage`. La descarga inicial de bibliotecas/modelo/fuentes sí contacta con jsDelivr, Google Cloud Storage y Google Fonts.
+Los fotogramas se analizan localmente con MediaPipe Pose Landmarker Lite; no se graban ni se envían a servidores. En tablets se analiza directamente el video (máximo 8 veces por segundo); en escritorio se prefiere un Web Worker con retorno automático al modo compatible si falla. No hay analítica. Solo se guarda la mejor puntuación en `localStorage`. La descarga inicial de bibliotecas/modelo/fuentes sí contacta con jsDelivr, Google Cloud Storage y Google Fonts.
+
+### iPad y otras tablets
+
+Abre el enlace HTTPS directamente en Chrome o Safari y permite la cámara frontal. Si aparece un error de permiso, revisa el acceso a Cámara de la aplicación en Ajustes y el permiso del sitio. La vista previa aparece antes de cargar el detector para distinguir un problema de cámara de uno de reconocimiento. El modo compatible evita transferir imágenes a un worker. La prueba `/tests/tablet.html` valida el análisis de video sintético sin cámara; no sustituye la prueba en un iPad real.
 
 - Three.js `0.170.0` (MIT): https://threejs.org/manual/#en/installation
 - MediaPipe Tasks Vision `0.10.21` (Apache-2.0): https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker/web_js

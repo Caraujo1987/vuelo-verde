@@ -1,0 +1,24 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><title>Prueba de video compatible</title><body>
+<h1>Modo compatible de tablet</h1><p>Analiza tres fotogramas de un video generado localmente. No usa la cámara.</p>
+<button id="run">Probar video compatible</button><p id="result" role="status">Pendiente</p>
+<video id="video" autoplay muted playsinline style="width:320px"></video>
+<script type="module">
+import {createVideoDetector} from '../src/detector.js';
+const button=document.querySelector('#run'),result=document.querySelector('#result'),video=document.querySelector('video');
+button.onclick=async()=>{
+  button.disabled=true;let detector,stream,raf,timer;
+  try{
+    result.textContent='Cargando detector compatible…';detector=await createVideoDetector();
+    const canvas=document.createElement('canvas');canvas.width=640;canvas.height=480;const ctx=canvas.getContext('2d');
+    function paint(){ctx.fillStyle='#b4cdb8';ctx.fillRect(0,0,640,480);ctx.fillStyle='#315c42';ctx.fillRect((performance.now()/10)%580,200,50,50);raf=requestAnimationFrame(paint);}paint();
+    stream=canvas.captureStream(12);video.srcObject=stream;await video.play();
+    let frames=0,last=-1;
+    await new Promise((resolve,reject)=>{
+      timer=setTimeout(()=>reject(new Error('No llegaron fotogramas de video.')),10000);
+      function check(){try{if(video.readyState>=2&&video.currentTime!==last){last=video.currentTime;const output=detector.detectForVideo(video,performance.now());if(output.landmarks.length)throw new Error('Pose inesperada en video sintético');frames++;}if(frames===3)resolve();else setTimeout(check,150);}catch(error){reject(error);}}check();
+    });
+    result.textContent='CORRECTO: tres fotogramas de HTMLVideoElement analizados sin worker ni ImageBitmap.';
+  }catch(error){result.textContent='ERROR: '+error.message;}
+  finally{clearTimeout(timer);cancelAnimationFrame(raf);stream?.getTracks().forEach(t=>t.stop());video.srcObject=null;detector?.close();button.disabled=false;}
+};
+</script></body></html>
