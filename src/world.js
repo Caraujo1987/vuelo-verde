@@ -1,5 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
-import { ringPosition, TOTAL_RINGS, lerp } from './flight.js';
+import { ringPosition, TOTAL_RINGS, lerp } from './flight.js?v=1.2.0';
 
 const palette={leaf:0x478e55,light:0x79ad5d,dark:0x23664b,sand:0xe5d9a5,rock:0x849c86};
 function material(color,extra={}){return new THREE.MeshStandardMaterial({color,roughness:1,flatShading:true,...extra});}
@@ -7,7 +7,7 @@ function mesh(geo,mat,parent,x=0,y=0,z=0,sx=1,sy=1,sz=1){const m=new THREE.Mesh(
 export class World {
   constructor(canvas){
     this.renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio,navigator.maxTouchPoints>1?1.15:1.75));
     this.renderer.outputColorSpace=THREE.SRGBColorSpace;
     this.renderer.toneMapping=THREE.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.22;
     this.scene=new THREE.Scene();this.scene.background=new THREE.Color(0xc8e2d7);this.scene.fog=new THREE.Fog(0xc8e2d7,100,420);
@@ -111,8 +111,13 @@ export class World {
     this.bird.rotation.z=lerp(this.bird.rotation.z,-input.turn*.55,Math.min(1,dt*5));
     this.bird.rotation.x=lerp(this.bird.rotation.x,state.vy*.025,Math.min(1,dt*5));
     this.bird.rotation.y=lerp(this.bird.rotation.y,-input.turn*.2,Math.min(1,dt*4));
-    const flap=Math.sin(time*(input.boost?11:5.8))*(playing?.32:.23);
-    this.wings[0].rotation.z=flap;this.wings[1].rotation.z=-flap;
+    const flap=Math.sin(time*(input.boost?11:5.8))*(input.boost?.85:playing?.42:.23);
+    const tracked=playing&&Number.isFinite(input.leftWing);
+    const a=1-Math.exp(-dt*12),fold=playing?(input.foldAmount||0):0;
+    this.wings[0].rotation.z=lerp(this.wings[0].rotation.z,tracked?-input.leftWing:flap,a);
+    this.wings[1].rotation.z=lerp(this.wings[1].rotation.z,tracked?input.rightWing:-flap,a);
+    this.wings[0].rotation.y=lerp(this.wings[0].rotation.y,fold*1.1,a);
+    this.wings[1].rotation.y=lerp(this.wings[1].rotation.y,-fold*1.1,a);
     const aspect=this.camera.aspect;
     const offset=playing?new THREE.Vector3(0,6.5,18):new THREE.Vector3(10,7,18);
     this.position.set(state.x*.72+offset.x,state.y+offset.y,state.z+offset.z);

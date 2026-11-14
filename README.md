@@ -30,11 +30,16 @@ Abre **http://127.0.0.1:4173** en Chrome o Edge. No abras `index.html` con doble
 | --- | --- |
 | Brazos abiertos a la altura de los hombros | Planear |
 | Subir y bajar ambos brazos | Impulso de aleteo |
+| Recoger ambos brazos y mantenerlos cerca del cuerpo | Recoger las alas y descender |
 | Mantener ambos brazos arriba / abajo | Ganar / perder altura |
 | Bajar el brazo derecho / izquierdo | Girar a la derecha / izquierda |
 | P o Escape | Pausar / continuar |
 
-El vuelo se pausa cuando se pierde el seguimiento más de 1,8 segundos o al cambiar de ventana. «Recalibrar postura» vuelve al inicio. «Apagar cámara» detiene todas las pistas de video. Puedes jugar sentado si ambas manos quedan dentro del encuadre.
+El seguimiento usa las muñecas y, si alguna queda oculta, estima el brazo desde el codo. Las señales se suavizan y se corrigen según la proporción de la imagen para conservar el comportamiento en vertical y horizontal. Un cierre mantenido durante aproximadamente medio segundo se distingue de un aleteo rápido; abre los brazos para volver a planear.
+
+Si faltan señales nuevas durante 350 ms, el loro empieza a planear con asistencia y deja de mantener giros o descensos anteriores. Tras 8 segundos sin postura, el vuelo se pausa; se reanuda automáticamente después de tres detecciones consecutivas. Las pausas manuales y por cambio de ventana siguen requiriendo pulsar «Seguir volando». «Recalibrar postura» vuelve al inicio. «Apagar cámara» detiene todas las pistas de video. Puedes jugar sentado si el encuadre incluye los brazos.
+
+Las alas siguen la elevación de cada brazo y se recogen al detectar cierre. El impulso de aleteo se reconoce por el cambio de altura de los brazos, sin exigir que se eleven por encima de los hombros. Las pruebas sintéticas cubren pérdidas, codos, cierre, aleteo y orientación; la estabilidad real debe validarse con cada cámara, iluminación y dispositivo.
 
 ## Teclado
 

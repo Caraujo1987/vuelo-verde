@@ -1,4 +1,4 @@
-import {poseSignals} from './flight.js';
+import {poseSignals} from './flight.js?v=1.2.0';
 import {createVideoDetector,preferDirectVideo,openCamera} from './detector.js';
 
 export class CameraControls {
@@ -76,7 +76,7 @@ export class CameraControls {
     finally{if(gen===this.generation)this.switching=false;}
   }
   fail(message){this.stop();this.onPose(null,null);this.onError(message);}
-  deliver(points){this.draw(points);this.onPose(poseSignals(points),points);}
+  deliver(points){this.draw(points);this.onPose(poseSignals(points,this.video.videoWidth/this.video.videoHeight||1),points);}
   async loop(){
     if(!this.active)return;
     this.raf=requestAnimationFrame(()=>this.loop());
