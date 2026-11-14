@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {poseSignals,FlapDetector,newFlight,stepFlight,ringPosition,TOTAL_RINGS} from '../src/flight.js';
+function pose(){const p=Array.from({length:33},()=>({x:.5,y:.5,visibility:1}));p[11]={x:.6,y:.4,visibility:1};p[12]={x:.4,y:.4,visibility:1};p[15]={x:.9,y:.4,visibility:1};p[16]={x:.1,y:.4,visibility:1};return p;}
+test('neutral arms produce level flight and low visibility is rejected',()=>{const p=pose();assert.equal(poseSignals(p).turn,0);assert.equal(poseSignals(p).lift,0);assert.ok(poseSignals(p).spread>3);p[16].visibility=.2;assert.equal(poseSignals(p),null);assert.equal(poseSignals(null),null);});
+test('lowering the right arm turns right and lowering the left turns left',()=>{let p=pose();p[16].y=.6;assert.ok(poseSignals(p).turn>0);p=pose();p[15].y=.6;assert.ok(poseSignals(p).turn<0);});
+test('one full flap creates one impulse, with cooldown and rearming',()=>{const f=new FlapDetector();assert.equal(f.update(.5,0),false);assert.equal(f.update(-.5,100),true);assert.equal(f.update(-.6,300),false);f.update(.4,350);assert.equal(f.update(-.6,400),false);assert.equal(f.update(-.6,600),true);});
+test('ring crossings use interpolation and are scored once',()=>{const s=newFlight(),r=ringPosition(0);Object.assign(s,{x:r.x,y:r.y,z:r.z+.1});const events=stepFlight(s,{turn:0,lift:.183},.02);assert.equal(events[0].type,'ring');assert.equal(s.score,1);stepFlight(s,{turn:0,lift:.183},.02);assert.equal(s.score,1);});
+test('missed rings do not score',()=>{const s=newFlight(),r=ringPosition(0);Object.assign(s,{x:30,y:r.y,z:r.z+.1});assert.equal(stepFlight(s,{turn:0,lift:0},.02)[0].type,'miss');assert.equal(s.score,0);});
+test('flight finishes at the time limit and stops updating',()=>{const s=newFlight();s.time=89.99;const events=stepFlight(s,{turn:0,lift:0},.02);assert.ok(events.some(e=>e.type==='finish'));assert.equal(s.finished,true);const z=s.z;assert.deepEqual(stepFlight(s,{},1),[]);assert.equal(s.z,z);});
+test('controls remain bounded, and route is reachable within 90 seconds',()=>{const s=newFlight();for(let i=0;i<1200;i++)stepFlight(s,{turn:1,lift:1,flap:i%40===0},1/60);assert.ok(s.x<=32&&s.y<=38);assert.ok(-ringPosition(TOTAL_RINGS-1).z/21<90);});

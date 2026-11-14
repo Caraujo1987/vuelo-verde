@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#e9eee4">
+  <meta name="description" content="Abre tus alas. Pilota un loro verde con tus brazos en una aventura 3D por una isla tropical.">
+  <title>Vuelo Verde · Abre tus alas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E🦜%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar"><a class="brand" href="./" aria-label="Vuelo Verde, inicio"><span class="brand-icon">↗</span> vuelo<span>verde</span><small>EXPERIENCIA INTERACTIVA</small></a><div class="top-right"><span class="live-dot"></span> UN PEQUEÑO ESCAPE A LA NATURALEZA <button id="sound" class="icon-button" title="Activar sonido" aria-label="Activar sonido" aria-pressed="false">♫</button><button id="fullscreen" class="icon-button" title="Pantalla completa" aria-label="Pantalla completa">⛶</button></div></header>
+    <main>
+      <aside class="sidebar">
+        <div><div class="eyebrow"><span class="line"></span> TU CUERPO, TUS ALAS</div><h1>El cielo<br>empieza en<br><em>tus brazos.</em></h1><p class="intro">Conviértete en un loro verde.<br>Despliega tus alas y encuentra tu camino<br>sobre el bosque tropical.</p></div>
+        <section class="flight-setup" aria-label="Preparar vuelo">
+          <div class="section-title"><span>01 — ELIGE CÓMO VOLAR</span><span class="tiny-arrow">↘</span></div>
+          <div class="mode-tabs" role="group" aria-label="Modo de control"><button id="camera-mode" class="selected" aria-pressed="true">◉ &nbsp; Con mis brazos</button><button id="keyboard-mode" aria-pressed="false">⌨ &nbsp; Con teclado</button></div>
+          <div class="camera-box" id="camera-box"><video id="webcam" autoplay playsinline muted></video><canvas id="skeleton" width="640" height="480"></canvas><div id="camera-placeholder"><svg viewBox="0 0 140 70" aria-hidden="true"><circle cx="70" cy="13" r="8"/><path d="M70 25V49M70 28L35 25 10 13M70 28L105 25 130 13M70 49L54 67M70 49L86 67"/></svg><span>Tu próxima aventura empieza aquí</span></div><span class="camera-badge" id="camera-badge">CÁMARA APAGADA</span></div>
+          <p id="tracking-status" class="tracking-status" role="status" aria-live="polite">Activa la cámara y deja espacio para tus brazos.</p>
+          <button id="start" class="primary" disabled>Preparando el bosque… <span>↗</span></button>
+          <div class="secondary-actions"><button id="calibrate" hidden>Recalibrar postura</button><button id="stop-camera" hidden>Apagar cámara</button></div>
+          <p class="privacy"><span>⌾</span> La imagen se procesa en tu computador.<br>No grabamos ni enviamos tu video.</p>
+        </section>
+        <div class="sidebar-bottom"><span>CREADO PARA EXPLORAR</span><span>01 / ISLA ESMERALDA</span></div>
+      </aside>
+      <section class="viewport" aria-label="Juego de vuelo 3D">
+        <canvas id="game" aria-label="Un loro verde vuela sobre una isla tropical"></canvas>
+        <div class="scene-top"><div class="location"><span class="location-icon">✧</span><div><span class="eyebrow">TU DESTINO</span><strong>Isla Esmeralda</strong></div></div><span class="environment">24° &nbsp; · &nbsp; VIENTO SUAVE</span></div>
+        <div id="hud" class="hud" hidden><div><span>AROS</span><strong id="score">0 <small>/ 18</small></strong></div><div><span>TIEMPO</span><strong id="time">1:30</strong></div><div><span>ALTURA</span><strong id="altitude">14 <small>m</small></strong></div><button id="pause" class="icon-button" aria-label="Pausar vuelo">Ⅱ</button></div>
+        <div id="welcome-label" class="welcome-label"><span class="pill">UN VUELO. MIL SENSACIONES.</span><h2>Un poco más cerca<br>de la libertad.</h2><p>Sin mandos. Sin prisa. Solo tú y el cielo.</p></div>
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
+        <div id="overlay" class="overlay" hidden><div class="overlay-card"><span id="overlay-kicker" class="eyebrow">RESPIRA UN MOMENTO</span><h2 id="overlay-title">Vuelo en pausa</h2><p id="overlay-copy">El bosque puede esperar.</p><button id="resume" class="primary">Seguir volando <span>↗</span></button><button id="restart" class="text-button">Volver al inicio</button></div></div>
+        <div class="scene-bottom"><span class="scene-caption"><span class="live-dot"></span> <span id="flight-label">LISTO PARA DESCUBRIR</span></span><span id="speed">VUELO LIBRE · 3D</span></div>
+        <div id="progress" class="progress"><span></span></div>
+      </section>
+    </main>
+    <footer class="instructions"><div class="instruction-heading"><span class="eyebrow">ASÍ SE SIENTE VOLAR</span><strong>Déjate llevar.</strong></div><div><span class="gesture">↔</span><p><strong>Abre los brazos</strong><span>Extiéndelos para planear.</span></p></div><div><span class="gesture">⌁</span><p><strong>Aletea para subir</strong><span>Baja ambos brazos para tomar impulso.</span></p></div><div><span class="gesture">⤴</span><p><strong>Inclínate y explora</strong><span>Baja un ala para girar hacia ese lado.</span></p></div><div class="objective"><span>◎</span><p><strong>Sigue los aros dorados</strong><span>18 oportunidades para llegar más lejos.</span></p></div></footer>
+  </div>
+  <noscript>Activa JavaScript para jugar a Vuelo Verde.</noscript>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
